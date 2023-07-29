@@ -1,5 +1,5 @@
 import Timeline from "./Timeline";
-import Event from "./Event";
+import Events from "./Events";
 
 export default class Project {
   project_id: number;
@@ -9,9 +9,9 @@ export default class Project {
   project_center_date: string;
 
   timelines: Timeline[];
-  events: Event[];
+  events: Events[];
 
-  constructor(project_id: number, project_name: string, creation_date: Date, last_modified: Date, project_center_date: string, timelines: Timeline[] = [], events: Event[] = []) {
+  constructor(project_id: number, project_name: string, creation_date: Date, last_modified: Date, project_center_date: string, timelines: Timeline[] = [], events: Events[] = []) {
     this.project_id = project_id;
     this.project_name = project_name;
     this.creation_date = creation_date;

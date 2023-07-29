@@ -3,7 +3,7 @@ import {useState} from 'react';
 import Project from "../../models/Project";
 import DateController from "../common/DateController";
 
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import ConfirmationDialog from '../common/ConfirmationDialog';
 import ProjectController from '../../controller/ProjectController';
 import CustomNotification from '../common/CustomNotification';
@@ -11,12 +11,13 @@ import CustomNotification from '../common/CustomNotification';
 interface typeProps {
   project: Project;
   removeProject: (project: Project) => void;
+  openProject: (project: Project | null) => void;
 }
 
 function ProjectItemList(props: typeProps) {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
 
-  const { project, removeProject } = props;
+  const { project, removeProject, openProject } = props;
 
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [textNotification, setTextNotification] = useState<string>("");
@@ -51,7 +52,7 @@ function ProjectItemList(props: typeProps) {
     setOpenDelete(true);
   }
   const handleOpenProject = () => {
-
+    openProject(project);
   }
   
   return (

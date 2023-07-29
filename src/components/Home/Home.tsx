@@ -7,7 +7,13 @@ import ProjectForm from './ProjectForm';
 import CustomNotification from '../common/CustomNotification';
 import { Grid, Typography } from '@mui/material';
 
-function Home(props: any) {
+interface typeProps {
+  openProject: (project: Project | null) => void;
+}
+
+function Home(props: typeProps) {
+  const { openProject } = props
+
   const [projects, setProjects] = useState<Project[]>([]);
 
   const [openNotification, setOpenNotification] = useState<boolean>(false);
@@ -66,7 +72,7 @@ function Home(props: any) {
             ) : (
               <div>
                 <h2>Projets existants :</h2>
-                <Grid container 
+                <Grid container
                   rowSpacing={2}
                   direction="column"
                   alignItems="center"
@@ -75,9 +81,10 @@ function Home(props: any) {
                   {projects.sort((a, b) => a.last_modified < b.last_modified ? 1 : -1)
                   .map( (p: Project) => {
                     return (
-                      <Grid item>
-                      <ProjectItemList key={p.project_id} project={p} removeProject={removeProject}></ProjectItemList>
-                    </Grid>)
+                      <Grid item key={"Grid_"+p.project_id}>
+                        <ProjectItemList key={"ProjectItemList_"+p.project_id} project={p} removeProject={removeProject} openProject={openProject}></ProjectItemList>
+                      </Grid>
+                    )
                   })}
                 </Grid>
               </div>

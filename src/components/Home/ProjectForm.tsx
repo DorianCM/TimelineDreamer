@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import ProjectController from "../../controller/ProjectController";
 import Project from "../../models/Project";
