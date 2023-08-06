@@ -1,4 +1,4 @@
-import { Alert, Snackbar, SnackbarOrigin } from "@mui/material";
+import { Alert, Snackbar } from "@mui/material";
 
 export interface typeProps {
   open: boolean;

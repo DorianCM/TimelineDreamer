@@ -1,12 +1,13 @@
 import Timeline from "./Timeline";
 import Events from "./Events";
+import DreamerDate from "./DreamerDate";
 
 export default class Project {
   project_id: number;
   project_name: string;
   creation_date: Date;
   last_modified: Date;
-  project_center_date: string;
+  project_center_date: DreamerDate;
 
   timelines: Timeline[];
   events: Events[];
@@ -16,7 +17,7 @@ export default class Project {
     this.project_name = project_name;
     this.creation_date = creation_date;
     this.last_modified = last_modified;
-    this.project_center_date = project_center_date;
+    this.project_center_date = DreamerDate.fromString(project_center_date);
     
     this.timelines = timelines
     this.events = events

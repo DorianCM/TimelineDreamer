@@ -64,7 +64,7 @@ function Home(props: typeProps) {
           <Typography variant="h1" sx={{ mb:20 }}>TimelineDreamer</Typography>
         </Grid>
         <Grid item>
-          <ProjectForm addProject={addProject}></ProjectForm>
+          <ProjectForm addProject={addProject}/>
         </Grid>
         <Grid item>
           { projects.length === 0 ? (
@@ -91,7 +91,7 @@ function Home(props: typeProps) {
             )}
         </Grid>
       </Grid>
-      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}></CustomNotification>
+      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}/>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import DreamerDate from "./DreamerDate";
 import Events from "./Events";
 
 export default class Timeline {
@@ -6,19 +7,27 @@ export default class Timeline {
   timeline_title: string;
   timeline_order: number;
   timeline_color: string;
-  timeline_start: string;
-  timeline_end: string;
+  timeline_start: DreamerDate;
+  timeline_end: DreamerDate;
 
   events: Events[];
 
-  constructor(timeline_id: number, project_id: number, timeline_title: string, timeline_order: number, timeline_color: string, timeline_start: string, timeline_end: string, events: Events[] = []) {
+  constructor(timeline_id: number, project_id: number, timeline_title: string, timeline_order: number, timeline_color: string, timeline_start: string | DreamerDate, timeline_end: string | DreamerDate, events: Events[] = []) {
     this.timeline_id = timeline_id;
     this.project_id = project_id;
     this.timeline_title = timeline_title;
     this.timeline_order = timeline_order;
     this.timeline_color = timeline_color;
-    this.timeline_start = timeline_start;
-    this.timeline_end = timeline_end;
+    
+    if(timeline_start instanceof DreamerDate)
+      this.timeline_start = timeline_start
+    else
+      this.timeline_start = DreamerDate.fromString(timeline_start);
+    
+    if(timeline_end instanceof DreamerDate)
+      this.timeline_end = timeline_end
+    else
+      this.timeline_end = DreamerDate.fromString(timeline_end);
 
     this.events = events
   }

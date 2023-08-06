@@ -15,9 +15,9 @@ interface typeProps {
 }
 
 function ProjectItemList(props: typeProps) {
-  const [openDelete, setOpenDelete] = useState<boolean>(false);
-
   const { project, removeProject, openProject } = props;
+  
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
 
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [textNotification, setTextNotification] = useState<string>("");
@@ -85,7 +85,7 @@ function ProjectItemList(props: typeProps) {
         title={"Supprimer le projet "+project.project_name+" ?"}
         description={"La suppression est définitive ! Voulez-vous continuer ?"}
       />
-      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}></CustomNotification>
+      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}/>
     </Grid>
   )
 }

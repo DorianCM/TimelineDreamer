@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-import ProjectController from "../../controller/ProjectController";
 import Project from "../../models/Project";
+import ProjectController from "../../controller/ProjectController";
+
 import BoxModal from "../common/BoxModal";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -32,7 +33,7 @@ function ProjectForm(props: typeProps) {
       ProjectController.createProject(projectName)
       .then(res => {
         if(res instanceof Project) {
-          props.addProject(res)
+          props.addProject(res);
           setOpen(false);
         }
         else if (res instanceof Error) {
@@ -69,7 +70,7 @@ function ProjectForm(props: typeProps) {
           </Box>
         </BoxModal>
       </Modal>
-      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}></CustomNotification>
+      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}/>
     </div>
   );
 }

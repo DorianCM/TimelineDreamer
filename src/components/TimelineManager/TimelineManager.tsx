@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
+
 import Project from '../../models/Project';
 import Timeline from '../../models/Timeline';
 import Events from '../../models/Events';
-import TimelineController from '../../controller/TimelineController';
-import EventController from '../../controller/EventController';
-import CustomNotification from '../common/CustomNotification';
-import TimelineCollapse from './TimelineCollapse';
 
-import { Box, Button, Collapse, Grid, List, ListItemButton, ListItemText, Typography } from '@mui/material';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import GraphicsArea from './GraphicsArea';
+import TimelineController from '../../controller/TimelineController';
+import CustomNotification from '../common/CustomNotification';
+import EventController from '../../controller/EventController';
+import SideMenu from './Menu/SideMenu';
+import GraphicsArea from './Graphic/GraphicsArea';
+
+import { Grid } from '@mui/material';
 
 interface typeProps {
   project: Project;
@@ -22,13 +22,37 @@ function TimelineManager(props: typeProps) {
 
   const [timelines, setTimelines] = useState<Timeline[]>([]);
   const [events, setEvents] = useState<Events[]>([]);
+
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [textNotification, setTextNotification] = useState<string>("");
   const [isErrorNotification, setIsErrorNotification] = useState<boolean>(false);
 
+  const addTimeline = (timeline: Timeline) => {
+    setTimelines([...timelines, timeline ]);
+  }
 
-  const handleBack = () => {
-    setProject(null);
+  const updateTimeline = (timeline: Timeline) => {
+    let old_timeline = timelines.find((t: Timeline) => { return t.timeline_id === timeline.timeline_id });
+    if(old_timeline?.events)
+      timeline.events = old_timeline?.events;
+    setTimelines([...timelines.filter((t: Timeline) => { return t.timeline_id !== timeline.timeline_id }), timeline]);
+  }
+
+  const removeTimeline = (timeline: Timeline) => {
+    setTimelines(timelines.filter((t: Timeline) => { return t.timeline_id !== timeline.timeline_id }));
+    setEvents(events.filter((e: Events) => { return e.timeline_id !== timeline.timeline_id }));
+  }
+
+  const addEvent = (event: Events) => {
+    setEvents([...events, event ]);
+  }
+
+  const updateEvent = (event: Events) => {
+    setEvents([...events.filter((e: Events) => { return e.event_id !== event.event_id }), event]);
+  }
+
+  const removeEvent = (event: Events) => {
+    setEvents(events.filter((e: Events) => { return e.event_id !== event.event_id }));
   }
 
   useEffect(() => {
@@ -67,30 +91,15 @@ function TimelineManager(props: typeProps) {
       <Grid container
         direction="row"
       >
-        <Grid item xs={2}>
-          <Box flexDirection='column'>
-            <Button onClick={handleBack}>Retour au menu</Button>
-            <Typography variant='body1'>{project.project_name}</Typography>
-
-            <List>
-            {timelines.sort((a, b) => a.timeline_order < b.timeline_order ? 1 : -1)
-            .map( (t: Timeline) => {
-              return (
-                <TimelineCollapse timeline={t} events={events.filter((e: Events) => e.timeline_id === t.timeline_id)} key={"TimelineCollapse_"+t.timeline_id}/>
-              )
-            })}
-            </List>
-            
-          </Box>
-        
-
+        <Grid item xs={3}>
+          <SideMenu project={project} timelines={timelines} events={events} setProject={setProject} setTimelines={setTimelines} managerAddTimeline={addTimeline} managerUpdateTimeline={updateTimeline} managerRemoveTimeline={removeTimeline} managerAddEvent={addEvent} managerUpdateEvent={updateEvent} managerRemoveEvent={removeEvent}/>
         </Grid>
-        <Grid item xs={10}>
-          <GraphicsArea/>
+        <Grid item xs={9}>
+          <GraphicsArea timelines={timelines} events={events}/>
         </Grid>
       </Grid>
 
-      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}></CustomNotification>
+      <CustomNotification open={openNotification} setOpen={setOpenNotification} text={textNotification} isError={isErrorNotification}/>
     </React.Fragment>
   )
 }
