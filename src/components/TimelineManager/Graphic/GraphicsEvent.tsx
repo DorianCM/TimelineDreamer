@@ -8,6 +8,7 @@ import { Box, Typography } from '@mui/material';
 
 interface typeProps {
   event: Events;
+  isInGroup: boolean;
   timeline: Timeline;
   differentDates: DreamerDate[];
   gapBetweenDates: number;
@@ -15,12 +16,10 @@ interface typeProps {
 }
 
 function GraphicsEvent(props: typeProps) {
-  const { event, timeline, differentDates, gapBetweenDates, options } = props;
+  const { event, isInGroup, timeline, differentDates, gapBetweenDates, options } = props;
 
   const [openHover, setOpenHover] = useState<boolean>(false);
-
-  const left = -(options.sizeTimeline/2) + gapBetweenDates * (differentDates.findIndex(d => d.isEqual(event.event_date)) - differentDates.findIndex(d => d.isEqual(timeline.timeline_start)));
-
+  
   const onMouseEnter = (e: React.MouseEvent) => {
     setOpenHover(true);
   }
@@ -28,16 +27,41 @@ function GraphicsEvent(props: typeProps) {
     setOpenHover(false);
   }
 
+  let left = 0;
+  let bottom = 0;
+  if(!isInGroup) {
+    left = -(options.sizeEvent/2) + gapBetweenDates * (differentDates.findIndex(d => d.isEqual(event.event_date)) - differentDates.findIndex(d => d.isEqual(timeline.timeline_start)));
+    bottom = (options.sizeTimeline - options.sizeEvent)/2;
+  }
+
   return (
-    <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={{width: options.sizeEvent+'px', height: options.sizeEvent+'px', backgroundColor: 'green', 
-                bottom:-(options.sizeEvent/2 - options.sizeTimeline)+"px", 
-                left: left+'px', position: 'absolute', zIndex: 10}}>
-      <Box hidden={!openHover} sx={{ flexDirection: 'column', backgroundColor: 'white' }}>
-        <Typography variant="caption">{event.event_title}</Typography>
-        <Typography variant="body1">{event.event_description}</Typography>
-        <Typography variant="body1">{event.event_date.toString()}</Typography>
-      </Box>
-    </div> 
+    <React.Fragment>
+      {isInGroup ? (
+
+        <Box onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={{width: options.sizeEvent, height: options.sizeEvent,
+          backgroundColor: 'green', 
+          zIndex: 10,
+          margin: 10}}>
+          <Box hidden={!openHover} sx={{ flexDirection: 'column', backgroundColor: 'white'}}>
+            <Typography variant="caption">{event.event_title}</Typography>
+            <Typography variant="body1">{event.event_description}</Typography>
+            <Typography variant="body1">{event.event_date.toString()}</Typography>
+          </Box>
+        </Box>
+      ) : (
+        <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={{width: options.sizeEvent, height: options.sizeEvent,
+          backgroundColor: 'green', 
+          bottom: bottom, 
+          left: left, position: 'absolute', zIndex: 10}}>
+          <Box hidden={!openHover} sx={{ flexDirection: 'column', backgroundColor: 'white' }}>
+            <Typography variant="caption">{event.event_title}</Typography>
+            <Typography variant="body1">{event.event_description}</Typography>
+            <Typography variant="body1">{event.event_date.toString()}</Typography>
+          </Box>
+        </div>
+      )}
+    </React.Fragment>
+    
   )
 }
 

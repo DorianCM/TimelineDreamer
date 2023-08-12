@@ -14,7 +14,7 @@ interface typeProps {
 
 const options: GraphicOptions = {
   paddingArea: 100,
-  sizeTimeline: 50,
+  sizeTimeline: 100,
   sizeEvent: 40,
   sizeRuler: 50,
 
@@ -39,12 +39,12 @@ function GraphicsArea(props: typeProps) {
   const [previousScrollTop, setPreviousScrollTop] = useState<number>(0);
   const [variantY, setVariantY] = useState<number>(0);
 
-  const [height, setHeight] = useState<number>(1);
+  const [heightScreen, setHeightScreen] = useState<number>(1);
 
   const [gapBetweenDates, setGapBetweenDates] = useState<number>(0);
 
   const handleResize = () => {
-    setHeight(window.innerHeight);
+    setHeightScreen(window.innerHeight);
   };
 
   useEffect(() => {
@@ -133,11 +133,16 @@ function GraphicsArea(props: typeProps) {
   //   }
   // }
 
+
+  const gap = isFinite(gapBetweenDates) ? gapBetweenDates : options.minimumGapBetweenDates;
+  const width = differentDates.length*gap+2*options.paddingArea < options.minimumWidth ? options.minimumWidth : differentDates.length*gap+2*options.paddingArea;
+  const height = timelines.length*options.gapBetweenTimeline+2*options.paddingArea < options.minimumHeight ? options.minimumHeight : timelines.length*options.gapBetweenTimeline+2*options.paddingArea;
+
   return (
     <div onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseMove={onMouseMove} onMouseLeave={onMouseUp}
-    style={{width: '100%', height: height+"px", backgroundColor: 'blue', overflow:'hidden'}} className='toGrab'>
-      <div style={{width: differentDates.length*gapBetweenDates+2*options.paddingArea < options.minimumWidth ? options.minimumWidth+'px' : differentDates.length*gapBetweenDates+2*options.paddingArea+'px', 
-                  height: timelines.length*options.gapBetweenTimeline+2*options.paddingArea < options.minimumHeight ? options.minimumHeight+'px' : timelines.length*options.gapBetweenTimeline+2*options.paddingArea+'px', position: 'relative'}}>
+    style={{width: '100%', height: heightScreen, backgroundColor: 'blue', overflow:'hidden'}} className='toGrab'>
+      <div style={{width: width, 
+                  height: height, position: 'relative'}}>
 
         {timelines.sort((a: Timeline, b: Timeline) => a.timeline_order < b.timeline_order ? 1 : -1)
         .map((t: Timeline, index: number) => {
@@ -149,10 +154,10 @@ function GraphicsArea(props: typeProps) {
             nbOrder--;
 
           return (
-            <GraphicsTimeline timeline={t} events={events.filter((e: Events) => e.timeline_id === t.timeline_id)} differentDates={differentDates} order={nbOrder} heightScreen={height} gapBetweenDates={gapBetweenDates} options={options}  key={'graphics_timeline_'+t.timeline_id}/>
+            <GraphicsTimeline timeline={t} events={events.filter((e: Events) => e.timeline_id === t.timeline_id)} differentDates={differentDates} order={nbOrder} heightScreen={heightScreen} gapBetweenDates={gap} options={options}  key={'graphics_timeline_'+t.timeline_id}/>
           )})
         }
-        <GraphicsRuler height={height-variantY} differentDates={differentDates} gapBetweenDates={gapBetweenDates} options={options}/>
+        <GraphicsRuler height={heightScreen-variantY} differentDates={differentDates} gapBetweenDates={gap} options={options}/>
       </div>
     </div>
   )
