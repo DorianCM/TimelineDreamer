@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Timeline from '../../../models/Timeline';
 import Events from '../../../models/Events';
+import Merge from '../../../models/Merge';
 import DreamerDate from '../../../models/DreamerDate';
 import { GraphicOptions } from '../../common/GraphicOptions';
 
@@ -10,6 +11,7 @@ import GraphicsRuler from './GraphicRuler';
 interface typeProps {
   timelines: Timeline[];
   events: Events[];
+  merges: Merge[];
 }
 
 const options: GraphicOptions = {
@@ -24,20 +26,20 @@ const options: GraphicOptions = {
   minimumWidth: 500,
   minimumHeight: 500
 }
-
+//TODO useMemo
 function GraphicsArea(props: typeProps) {
-  const { timelines, events } = props;
+  const { timelines, events, merges } = props;
 
   const [differentDates, setDifferentDates] = useState<DreamerDate[]>([]);
 
-  const [isScrolling, setIsScrolling] = useState<boolean>(false);
-  const [clientX, setClientX] = useState<number>(0);
-  const [scrollX, setScrollX] = useState<number>(0);
-  const [previousScrollLeft, setPreviousScrollLeft] = useState<number>(0);
-  const [clientY, setClientY] = useState<number>(0);
-  const [scrollY, setScrollY] = useState<number>(0);
-  const [previousScrollTop, setPreviousScrollTop] = useState<number>(0);
-  const [variantY, setVariantY] = useState<number>(0);
+  const isScrolling = useRef<boolean>(false);
+  const clientX = useRef<number>(0);
+  const scrollX = useRef<number>(0);
+  const previousScrollLeft = useRef<number>(0);
+  const clientY = useRef<number>(0);
+  const scrollY = useRef<number>(0);
+  const previousScrollTop = useRef<number>(0);
+  const variantY = useRef<number>(0);
 
   const [heightScreen, setHeightScreen] = useState<number>(1);
 
@@ -75,50 +77,50 @@ function GraphicsArea(props: typeProps) {
   }, [timelines, events])
 
   const onMouseDown = (e: React.MouseEvent) => {
-    setIsScrolling(true);
-    setClientX(e.clientX);
-    setClientY(e.clientY);
+    isScrolling.current = true;
+    clientX.current = e.clientX;
+    clientY.current = e.clientY;
     e.currentTarget.classList.add('grabbing');
     e.currentTarget.classList.remove('toGrab');
   };
 
   const onMouseUp = (e: React.MouseEvent) => {
-    setIsScrolling(false);
+    isScrolling.current = false;
     
     e.currentTarget.classList.add('toGrab');
     e.currentTarget.classList.remove('grabbing');
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
-    if(scrollX < 0) { //To avoid being in the negative and to have to scroll in the void to come back
-      setScrollX(0);
+    if(scrollX.current < 0) { //To avoid being in the negative and to have to scroll in the void to come back
+      scrollX.current = 0;
     }
-    if(scrollY < 0) {
-      setScrollY(0);
+    if(scrollY.current < 0) {
+      scrollY.current = 0;
     }
     
-    if (isScrolling) {
+    if (isScrolling.current) {
       const scrollLeft = e.currentTarget.scrollLeft;
-      const newScrollLeft = scrollX - e.clientX + clientX;
+      const newScrollLeft = scrollX.current - e.clientX + clientX.current;
       const scrollTop = e.currentTarget.scrollTop;
-      const newScrollTop = scrollY - e.clientY + clientY;
+      const newScrollTop = scrollY.current - e.clientY + clientY.current;
 
       e.currentTarget.scrollLeft = newScrollLeft;
-      setScrollX(scrollX - e.clientX + clientX);
-      setClientX(e.clientX);
+      scrollX.current = scrollX.current - e.clientX + clientX.current;
+      clientX.current = e.clientX;
       e.currentTarget.scrollTop = newScrollTop;
-      setScrollY(scrollY - e.clientY + clientY);
-      setClientY(e.clientY);
+      scrollY.current = scrollY.current - e.clientY + clientY.current;
+      clientY.current = e.clientY;
       
-      if(previousScrollLeft === scrollLeft) { //To avoid being too high and to have to scroll in the void to come back
-        setScrollX(previousScrollLeft);
+      if(previousScrollLeft.current === scrollLeft) { //To avoid being too high and to have to scroll in the void to come back
+        scrollX.current = previousScrollLeft.current;
       }
-      if(previousScrollTop === scrollTop) {
-        setScrollY(previousScrollTop);
+      if(previousScrollTop.current === scrollTop) {
+        scrollY.current = previousScrollTop.current;
       }
-      setVariantY(variantY+previousScrollTop-scrollTop); //TODO Avoid little jump
-      setPreviousScrollLeft(scrollLeft);
-      setPreviousScrollTop(scrollTop);
+      variantY.current = variantY.current+previousScrollTop.current-scrollTop; //TODO Avoid little jump
+      previousScrollLeft.current = scrollLeft;
+      previousScrollTop.current = scrollTop;
     }
   };
 
@@ -145,19 +147,20 @@ function GraphicsArea(props: typeProps) {
                   height: height, position: 'relative'}}>
 
         {timelines.sort((a: Timeline, b: Timeline) => a.timeline_order < b.timeline_order ? 1 : -1)
-        .map((t: Timeline, index: number) => {
-          const nbTimelines = timelines.length;
-          const isEven = nbTimelines % 2 === 0
-          const nbFromCenter = isEven ? nbTimelines/2 : (nbTimelines-1)/2;
-          let nbOrder = (nbFromCenter-index);
-          if(isEven && nbOrder <= 0)
-            nbOrder--;
-
+        .map((t: Timeline) => {
           return (
-            <GraphicsTimeline timeline={t} events={events.filter((e: Events) => e.timeline_id === t.timeline_id)} differentDates={differentDates} order={nbOrder} heightScreen={heightScreen} gapBetweenDates={gap} options={options}  key={'graphics_timeline_'+t.timeline_id}/>
+            <GraphicsTimeline timeline={t} timelines={timelines}
+              events={events}
+              merges={merges.filter((m: Merge) => m.timeline_merging_id === t.timeline_id)}
+              differentDates={differentDates}
+              heightScreen={heightScreen}
+              gapBetweenDates={gap}
+              options={options}
+              key={'graphics_timeline_'+t.timeline_id}
+            />
           )})
         }
-        <GraphicsRuler height={heightScreen-variantY} differentDates={differentDates} gapBetweenDates={gap} options={options}/>
+        <GraphicsRuler height={heightScreen-variantY.current} differentDates={differentDates} gapBetweenDates={gap} options={options}/>
       </div>
     </div>
   )
