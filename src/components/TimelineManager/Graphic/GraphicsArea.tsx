@@ -20,13 +20,13 @@ const options: GraphicOptions = {
   sizeEvent: 40,
   sizeRuler: 50,
 
-  gapBetweenTimeline: 100,
+  gapBetweenTimeline: 150,
   minimumGapBetweenDates: 25,
 
   minimumWidth: 500,
   minimumHeight: 500
 }
-//TODO useMemo
+
 function GraphicsArea(props: typeProps) {
   const { timelines, events, merges } = props;
 
@@ -150,17 +150,17 @@ function GraphicsArea(props: typeProps) {
         .map((t: Timeline) => {
           return (
             <GraphicsTimeline timeline={t} timelines={timelines}
-              events={events}
-              merges={merges.filter((m: Merge) => m.timeline_merging_id === t.timeline_id)}
+              events={events.filter((e: Events) => e.event_date.isBetween(t.timeline_start, t.timeline_end))}
+              merges={merges}
               differentDates={differentDates}
               heightScreen={heightScreen}
-              gapBetweenDates={gap}
+              gapBetweenDates={isFinite(gapBetweenDates) ? gapBetweenDates : options.minimumGapBetweenDates}
               options={options}
               key={'graphics_timeline_'+t.timeline_id}
             />
           )})
         }
-        <GraphicsRuler height={heightScreen-variantY.current} differentDates={differentDates} gapBetweenDates={gap} options={options}/>
+        <GraphicsRuler height={heightScreen-variantY.current} differentDates={differentDates} gapBetweenDates={isFinite(gapBetweenDates) ? gapBetweenDates : options.minimumGapBetweenDates} options={options}/>
       </div>
     </div>
   )

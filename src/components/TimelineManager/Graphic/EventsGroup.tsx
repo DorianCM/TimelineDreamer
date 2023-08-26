@@ -30,7 +30,7 @@ function EventsGroup(props: typeProps) {
 
   const width = (eventsList.length + 2) * options.sizeEvent;
   const height = (eventsList.length + 2) * options.sizeEvent;
-  const left = -(options.sizeTimeline/2) + gapBetweenDates * (differentDates.findIndex(d => d.isEqual(eventsList[0].event_date)) - differentDates.findIndex(d => d.isEqual(timeline.timeline_start)));
+  const left = -(options.sizeEvent/2) + gapBetweenDates * (differentDates.findIndex(d => d.isEqual(eventsList[0].event_date)) - differentDates.findIndex(d => d.isEqual(timeline.timeline_start)));
 
   return (
     <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
