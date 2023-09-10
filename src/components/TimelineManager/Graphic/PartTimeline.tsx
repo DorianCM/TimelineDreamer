@@ -3,8 +3,10 @@ import Timeline from '../../../models/Timeline';
 import Events from '../../../models/Events';
 import DreamerDate from '../../../models/DreamerDate';
 import { GraphicOptions } from '../../common/GraphicOptions';
+import { PartOptions } from '../../common/PartOptions';
 import GraphicsEvent from './GraphicsEvent';
 import EventsGroup from './EventsGroup';
+import InputDate from './InputDate';
 
 interface typeProps {
   timeline: Timeline;
@@ -14,20 +16,13 @@ interface typeProps {
   heightScreen: number
   gapBetweenDates: number;
   options: GraphicOptions;
-  specifics: part
-}
+  specifics: PartOptions;
 
-interface part {
-  start: DreamerDate;
-  end: DreamerDate;
-  orderPosition: number;
-  isOnSameLine: boolean;
-  isMerging: boolean;
-  previousOrder: number;
+  addEvent: (event: Events) => void
 }
 
 function PartTimeline(props: typeProps) {
-  const { timeline, timelines, events, differentDates, heightScreen, gapBetweenDates, options, specifics } = props;
+  const { timeline, timelines, events, differentDates, heightScreen, gapBetweenDates, options, specifics, addEvent } = props;
 
   const getVerticalPosition = (order: number): number => {
     const nbTimelines = timelines.length;
@@ -62,11 +57,9 @@ function PartTimeline(props: typeProps) {
           {timeline.timeline_id +" "+ timeline.timeline_order +" "+ timeline.timeline_title}
 
           {listInputDate.map((d: DreamerDate) => {
-            const s = 10
-            const left = -(s/2) + gapBetweenDates * (differentDates.findIndex(date => date.isEqual(d)) - differentDates.findIndex(date => date.isEqual(specifics.start)));
 
             return (
-              <div style={{backgroundColor: 'black', left: left, height: options.sizeTimeline, width: 10, display: 'inline-block', position: 'absolute', zIndex: 2}} key={'date_input'+d.toString()+'_'+timeline.timeline_id}></div>
+              <InputDate timeline={timeline} timelines={timelines} differentDates={differentDates} date={d} gapBetweenDates={gapBetweenDates} options={options} specifics={specifics} addEvent={addEvent} key={'date_input'+d.toString()+'_'+timeline.timeline_id}/>
             )
           })}
 

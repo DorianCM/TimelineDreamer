@@ -9,3 +9,11 @@ html, body, #root {
 .grabbing {
   cursor: grabbing;
 }
+
+.inputDate {
+  background-color: black;
+}
+.inputDate:hover {
+  background-color: gray;
+  cursor: pointer;
+}

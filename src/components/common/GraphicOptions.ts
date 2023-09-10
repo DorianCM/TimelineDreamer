@@ -3,6 +3,7 @@ export interface GraphicOptions {
   sizeTimeline: number;
   sizeEvent: number;
   sizeRuler: number;
+  sizeInputDate: number;
 
   gapBetweenTimeline: number;
   minimumGapBetweenDates: number;

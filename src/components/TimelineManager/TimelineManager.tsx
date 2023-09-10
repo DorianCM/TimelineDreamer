@@ -122,7 +122,12 @@ function TimelineManager(props: typeProps) {
           <SideMenu project={project} timelines={timelines} events={events} setProject={setProject} setTimelines={setTimelines} managerAddTimeline={addTimeline} managerUpdateTimeline={updateTimeline} managerRemoveTimeline={removeTimeline} managerAddEvent={addEvent} managerUpdateEvent={updateEvent} managerRemoveEvent={removeEvent}/>
         </Grid>
         <Grid item xs={9}>
-          <GraphicsArea timelines={timelines} events={events} merges={merges}/>
+          <GraphicsArea
+            timelines={timelines}
+            events={events}
+            merges={merges}
+            managerAddEvent={addEvent}
+          />
         </Grid>
       </Grid>
 

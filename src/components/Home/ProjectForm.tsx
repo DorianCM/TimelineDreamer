@@ -4,10 +4,7 @@ import Project from "../../models/Project";
 import ProjectController from "../../controller/ProjectController";
 
 import BoxModal from "../common/BoxModal";
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import { Box, Button, Modal, TextField } from '@mui/material';
 import CustomNotification from "../common/CustomNotification";
 
 interface typeProps {

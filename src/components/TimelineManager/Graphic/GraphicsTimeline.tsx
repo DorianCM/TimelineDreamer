@@ -4,6 +4,7 @@ import Events from '../../../models/Events';
 import Merge from '../../../models/Merge';
 import DreamerDate from '../../../models/DreamerDate';
 import { GraphicOptions } from '../../common/GraphicOptions';
+import { PartOptions } from '../../common/PartOptions';
 import PartTimeline from './PartTimeline';
 
 interface typeProps {
@@ -15,31 +16,18 @@ interface typeProps {
   heightScreen: number
   gapBetweenDates: number;
   options: GraphicOptions;
-}
-
-interface part {
-  start: DreamerDate;
-  end: DreamerDate;
-  orderPosition: number;
-  isOnSameLine: boolean;
-  isMerging: boolean;
-  previousOrder: number;
+  
+  addEvent: (event: Events) => void
 }
 
 function GraphicsTimeline(props: typeProps) {
-  const { timeline, timelines, events, merges, differentDates, heightScreen, gapBetweenDates, options } = props;
+  const { timeline, timelines, events, merges, differentDates, heightScreen, gapBetweenDates, options, addEvent } = props;
 
-  const getTimelineEvents = (events: Events[], part: part): Events[] => {
+  const getTimelineEvents = (events: Events[], part: PartOptions): Events[] => {
     let timelineEvents: Events[] = []
     timelineEvents = timelineEvents.concat(events.filter((e: Events) => e.timeline_id === timeline.timeline_id));
 
     merges.filter((m: Merge) => timeline.timeline_id === m.timeline_base_id).forEach((m: Merge) => {
-      console.log("timeline");
-      console.log(timeline.timeline_id);
-      console.log(events.filter((e: Events) => e.timeline_id === m.timeline_merging_id));
-
-
-
       timelineEvents = timelineEvents.concat(events.filter((e: Events) => e.timeline_id === m.timeline_merging_id));
       //TODO call recursive merge
     })
@@ -61,31 +49,16 @@ function GraphicsTimeline(props: typeProps) {
     return order;
   }
 
-  const partsList: part[] = [];
+  const partsList: PartOptions[] = [];
   const ownMerges = merges.filter((m: Merge) => m.timeline_merging_id === timeline.timeline_id)
   if(ownMerges.length === 0) {
     const onlyPart = {start: timeline.timeline_start, end: timeline.timeline_end, orderPosition: timeline.timeline_order, isOnSameLine: true, isMerging: false, previousOrder: 0}
     partsList.push(onlyPart);
   }
   else {
-    // const firstMerge = merges.sort((a, b) => DreamerDate.compareDate(a.merge_date, b.merge_date))[0];
-    // const lastMerge = merges[merges.length-1];
-    // console.log(firstMerge);
-    // console.log(lastMerge);
-    
-    // // First part
-    // if(timeline.timeline_start.isEqual(firstMerge.merge_date)) {
-    //   const partStart = {start: timeline.timeline_start, end: firstMerge.merge_date, orderPosition: getTimelineOrder(firstMerge, timelines), isOnSameLine: false, isMerging: true};
-    //   partsList.push(partStart);
-    // }
-    // let partStart = {start: timeline.timeline_start, end: firstMerge.merge_date, orderPosition: timeline.timeline_order, isOnSameLine: true, isMerging: true}
-    // partsList.push(partStart)
-
-    // let partEnd = {start: lastMerge.merge_date, end: timeline.timeline_end, orderPosition: getTimelineOrder(lastMerge, timelines), isOnSameLine: !lastMerge.is_merging, isMerging: lastMerge.is_merging}
-    // partsList.push(partEnd)
     ownMerges.sort((a, b) => DreamerDate.compareDate(a.merge_date, b.merge_date));
 
-    let previousPart: part;
+    let previousPart: PartOptions;
     ownMerges.forEach((m: Merge, i: number) => {
       console.log(m.merge_date);
       console.log("i");
@@ -93,7 +66,7 @@ function GraphicsTimeline(props: typeProps) {
       
       const nextDate = i+1 === ownMerges.length ? timeline.timeline_end : ownMerges[i+1].merge_date;
 
-      let currentPart: part;
+      let currentPart: PartOptions;
       if(i === 0 && m.merge_date.isEqual(timeline.timeline_start)) {
         currentPart = {start: timeline.timeline_start, end: nextDate, orderPosition: getTimelineOrder(m, timelines), isOnSameLine: false, isMerging: true, previousOrder: 0};
       }
@@ -117,7 +90,7 @@ function GraphicsTimeline(props: typeProps) {
 
   return (
     <React.Fragment>
-        {partsList.map((p: part, i: number) => {
+        {partsList.map((p: PartOptions, i: number) => {
           return (
             <PartTimeline timeline={timeline} timelines={timelines}
               events={getTimelineEvents(events, p)}
@@ -126,6 +99,7 @@ function GraphicsTimeline(props: typeProps) {
               gapBetweenDates={gapBetweenDates}
               options={options}
               specifics={p}
+              addEvent={addEvent}
               key={'part_timeline'+timeline.timeline_id+'_'+i}/>
           )
         })}
