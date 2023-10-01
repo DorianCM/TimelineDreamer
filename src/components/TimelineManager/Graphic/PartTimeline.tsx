@@ -1,6 +1,7 @@
 import React from 'react';
 import Timeline from '../../../models/Timeline';
 import Events from '../../../models/Events';
+import Merge from '../../../models/Merge';
 import DreamerDate from '../../../models/DreamerDate';
 import { GraphicOptions } from '../../common/GraphicOptions';
 import { PartOptions } from '../../common/PartOptions';
@@ -19,10 +20,11 @@ interface typeProps {
   specifics: PartOptions;
 
   addEvent: (event: Events) => void
+  addMerge: (merge: Merge) => void
 }
 
 function PartTimeline(props: typeProps) {
-  const { timeline, timelines, events, differentDates, heightScreen, gapBetweenDates, options, specifics, addEvent } = props;
+  const { timeline, timelines, events, differentDates, heightScreen, gapBetweenDates, options, specifics, addEvent, addMerge } = props;
 
   const getVerticalPosition = (order: number): number => {
     const nbTimelines = timelines.length;
@@ -41,9 +43,7 @@ function PartTimeline(props: typeProps) {
   const ownDifferentesDates = differentDates.filter((d: DreamerDate) => events.some(e => e.event_date.isEqual(d)));
 
   const listInputDate: DreamerDate[] = differentDates.filter((d: DreamerDate) => d.isBetween(specifics.start, specifics.end) && specifics.isOnSameLine)
-  
-  //if date not on the same level, don't add the date zone button
-  //Faire un connard de rectangle
+
   return (
     <React.Fragment>
       {specifics.isOnSameLine ? (
@@ -59,7 +59,7 @@ function PartTimeline(props: typeProps) {
           {listInputDate.map((d: DreamerDate) => {
 
             return (
-              <InputDate timeline={timeline} timelines={timelines} differentDates={differentDates} date={d} gapBetweenDates={gapBetweenDates} options={options} specifics={specifics} addEvent={addEvent} key={'date_input'+d.toString()+'_'+timeline.timeline_id}/>
+              <InputDate timeline={timeline} timelines={timelines} differentDates={differentDates} date={d} gapBetweenDates={gapBetweenDates} options={options} specifics={specifics} addEvent={addEvent} addMerge={addMerge} key={'date_input'+d.toString()+'_'+timeline.timeline_id}/>
             )
           })}
 

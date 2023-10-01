@@ -119,7 +119,18 @@ function TimelineManager(props: typeProps) {
         direction="row"
       >
         <Grid item xs={3}>
-          <SideMenu project={project} timelines={timelines} events={events} setProject={setProject} setTimelines={setTimelines} managerAddTimeline={addTimeline} managerUpdateTimeline={updateTimeline} managerRemoveTimeline={removeTimeline} managerAddEvent={addEvent} managerUpdateEvent={updateEvent} managerRemoveEvent={removeEvent}/>
+          <SideMenu 
+            project={project}
+            timelines={timelines}
+            events={events}
+            setProject={setProject}
+            setTimelines={setTimelines}
+            managerAddTimeline={addTimeline}
+            managerUpdateTimeline={updateTimeline}
+            managerRemoveTimeline={removeTimeline}
+            managerAddEvent={addEvent}
+            managerUpdateEvent={updateEvent}
+            managerRemoveEvent={removeEvent}/>
         </Grid>
         <Grid item xs={9}>
           <GraphicsArea
@@ -127,6 +138,7 @@ function TimelineManager(props: typeProps) {
             events={events}
             merges={merges}
             managerAddEvent={addEvent}
+            managerAddMerge={addMerge}
           />
         </Grid>
       </Grid>

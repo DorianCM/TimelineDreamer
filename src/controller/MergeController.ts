@@ -23,7 +23,7 @@ export default class MergeController {
     });
   }
 
-  public static async createMerge(project_id: number, timeline_merging_id: number, timeline_base_id: number, event_description: string, merge_date: DreamerDate, is_merging: boolean): Promise<Merge | Error> {
+  public static async createMerge(project_id: number, timeline_merging_id: number, timeline_base_id: number, merge_date: DreamerDate, is_merging: boolean): Promise<Merge | Error> {
     const data = {
       "project_id": project_id+"",
       "timeline_merging_id": timeline_merging_id+"",
@@ -31,8 +31,13 @@ export default class MergeController {
       "merge_date": merge_date.toString(),
       "is_merging": is_merging
     }
+    console.log(data);
+    console.log(MergeController.url);
+    
     return axios.post(MergeController.url, data)
     .then(res => {
+      console.log(res);
+      
       const m = Merge.mergeFromJSON(res.data);
       return m;
     })

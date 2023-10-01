@@ -14,6 +14,7 @@ interface typeProps {
   merges: Merge[];
   
   managerAddEvent: (event: Events) => void
+  managerAddMerge: (event: Merge) => void
 }
 
 const options: GraphicOptions = {
@@ -31,7 +32,7 @@ const options: GraphicOptions = {
 }
 
 function GraphicsArea(props: typeProps) {
-  const { timelines, events, merges, managerAddEvent } = props;
+  const { timelines, events, merges, managerAddEvent, managerAddMerge } = props;
 
   const [differentDates, setDifferentDates] = useState<DreamerDate[]>([]);
 
@@ -160,6 +161,7 @@ function GraphicsArea(props: typeProps) {
               gapBetweenDates={isFinite(gapBetweenDates) ? gapBetweenDates : options.minimumGapBetweenDates}
               options={options}
               addEvent={managerAddEvent}
+              addMerge={managerAddMerge}
               key={'graphics_timeline_'+t.timeline_id}
             />
           )})

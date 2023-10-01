@@ -18,10 +18,11 @@ interface typeProps {
   options: GraphicOptions;
   
   addEvent: (event: Events) => void
+  addMerge: (merge: Merge) => void
 }
 
 function GraphicsTimeline(props: typeProps) {
-  const { timeline, timelines, events, merges, differentDates, heightScreen, gapBetweenDates, options, addEvent } = props;
+  const { timeline, timelines, events, merges, differentDates, heightScreen, gapBetweenDates, options, addEvent, addMerge } = props;
 
   const getTimelineEvents = (events: Events[], part: PartOptions): Events[] => {
     let timelineEvents: Events[] = []
@@ -100,6 +101,7 @@ function GraphicsTimeline(props: typeProps) {
               options={options}
               specifics={p}
               addEvent={addEvent}
+              addMerge={addMerge}
               key={'part_timeline'+timeline.timeline_id+'_'+i}/>
           )
         })}
